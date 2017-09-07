@@ -139,7 +139,13 @@ class Amazon_Payments_Model_SimplePath
               openssl_private_decrypt(base64_decode($payload->encryptedKey), $decryptedKey, $this->getPrivateKey(), OPENSSL_PKCS1_OAEP_PADDING);
 
               // Decrypt final payload (AES 128-bit)
-              $finalPayload = mcrypt_cbc(MCRYPT_RIJNDAEL_128, $decryptedKey, base64_decode($payload->encryptedPayload), MCRYPT_DECRYPT, base64_decode($payload->iv));
+              $finalPayload = openssl_decrypt(
+                  base64_decode($payload->encryptedPayload),
+                  'aes-128-cbc',
+                  $decryptedKey,
+                  OPENSSL_RAW_DATA | OPENSSL_NO_PADDING,
+                  base64_decode($payload->iv)
+              );
 
               // Remove binary characters
               $finalPayload = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $finalPayload);
