@@ -12,6 +12,8 @@ class Amazon_Payments_CheckoutController extends Amazon_Payments_Controller_Chec
 {
     protected $_amazonOrderReferenceId;
     protected $_checkoutUrl = 'checkout/amazon_payments';
+    
+    const COUPON_CODE_MAX_LENGTH = 255;
 
     /**
      * Checkout page
@@ -391,7 +393,14 @@ class Amazon_Payments_CheckoutController extends Amazon_Payments_Controller_Chec
 
         try {
             $codeLength = strlen($couponCode);
-            $isCodeLengthValid = $codeLength && $codeLength <= Mage_Checkout_Helper_Cart::COUPON_CODE_MAX_LENGTH;
+            
+            //Add support for Magento < 1.8
+            if(defined('Mage_Checkout_Helper_Cart::COUPON_CODE_MAX_LENGTH')){
+                $isCodeLengthValid = $codeLength && $codeLength <= Mage_Checkout_Helper_Cart::COUPON_CODE_MAX_LENGTH;
+            }
+            else{
+                $isCodeLengthValid = $codeLength && $codeLength <= self::COUPON_CODE_MAX_LENGTH;
+            }
 
             $this->_getQuote()->getShippingAddress()->setCollectShippingRates(true);
             $this->_getQuote()->setCouponCode($isCodeLengthValid ? $couponCode : '')
