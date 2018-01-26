@@ -64,7 +64,8 @@ abstract class Amazon_Payments_Controller_Checkout extends Mage_Checkout_Control
 
         // User is logging in...
 
-        $token = htmlentities($this->getRequest()->getParam('access_token'));
+        $token  = htmlentities($this->getRequest()->getParam('access_token'));
+        $params = Mage::app()->getRequest()->getParams();
 
         if ($token) {
             $_amazonLogin = Mage::getModel('amazon_payments/customer');
@@ -73,13 +74,9 @@ abstract class Amazon_Payments_Controller_Checkout extends Mage_Checkout_Control
                 if ($this->_getConfig()->isLoginEnabled() || !$this->_getOnepage()->getQuote()->isAllowedGuestCheckout()) {
                     /** @var Amazon_Payments_Model_Customer $customer */
                     $customer = $_amazonLogin->loginWithToken($token);
-                    if (is_array($customer)) {
-                        Mage::app()->getResponse()
-                            ->setRedirect(
-                                Mage::helper('amazon_payments')->getVerifyUrl() . '?redirect=' . $this->getRequest()->getParam('account_login') ? 'customer/account' : $this->_checkoutUrl,
-                                301
-                            )
-                            ->sendResponse();
+                    // Redirect to verify account page
+                    if ($customer->isRedirect()) {
+                        $this->_redirectUrl(Mage::helper('amazon_payments')->getVerifyUrl() . '?redirect=' . ($this->getRequest()->getParam('account_login') ? 'customer/account' : $this->_checkoutUrl));
                         return;
                     }
                 }
@@ -100,7 +97,7 @@ abstract class Amazon_Payments_Controller_Checkout extends Mage_Checkout_Control
                 $this->_redirectUrl(Mage::helper('amazon_payments')->getCheckoutUrl(false) . '#access_token=' . $token);
             }
             // Redirect to account page
-            else if (Mage::app()->getRequest()->getParams('account') == 'redirect') {
+            else if (isset($params['redirect'])) {
                 $this->_redirect('customer/account');
             }
             // User signed-in via popup
@@ -120,11 +117,6 @@ abstract class Amazon_Payments_Controller_Checkout extends Mage_Checkout_Control
                 $this->_redirect($this->_checkoutUrl, array('_secure' => true));
                 return;
             }
-
-
-
-
-
 
         }
 
@@ -147,7 +139,7 @@ abstract class Amazon_Payments_Controller_Checkout extends Mage_Checkout_Control
         if ($orderIdRedirect = Mage::getModel('core/cookie')->get('amazonOrderIdRedirect')) {
             Mage::getModel('core/cookie')->delete('amazonOrderIdRedirect');
             $this->_redirect('sales/order/view/order_id/' . $orderIdRedirect);
-        } else {
+        } else if (!Mage::app()->getResponse()->isRedirect()) {
             $this->_redirect('customer/account');
         }
     }
