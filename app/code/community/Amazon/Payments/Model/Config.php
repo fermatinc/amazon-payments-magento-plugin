@@ -148,7 +148,7 @@ class Amazon_Payments_Model_Config
      */
     public function getClientSecret($store = null)
     {
-        return Mage::helper('core')->decrypt(trim($this->_getStoreConfig(self::CONFIG_XML_PATH_CLIENT_SECRET, $store)));
+        return trim(Mage::helper('core')->decrypt(trim($this->_getStoreConfig(self::CONFIG_XML_PATH_CLIENT_SECRET, $store))));
     }
 
     /**
@@ -170,7 +170,7 @@ class Amazon_Payments_Model_Config
      */
     public function getAccessKey($store = null)
     {
-        return $this->_getStoreConfig(self::CONFIG_XML_PATH_ACCESS_KEY, $store);
+        return trim($this->_getStoreConfig(self::CONFIG_XML_PATH_ACCESS_KEY, $store));
     }
 
     /**
@@ -196,7 +196,7 @@ class Amazon_Payments_Model_Config
         if (!$region) {
             $region = 'us';
         }
-        return $region;
+        return trim($region);
     }
 
     /**
@@ -218,7 +218,7 @@ class Amazon_Payments_Model_Config
      */
     public function getCheckoutPage($store = null)
     {
-        return $this->_getStoreConfig(self::CONFIG_XML_PATH_CHECKOUT_PAGE, $store);
+        return trim($this->_getStoreConfig(self::CONFIG_XML_PATH_CHECKOUT_PAGE, $store));
     }
 
     /**
@@ -229,7 +229,7 @@ class Amazon_Payments_Model_Config
      */
     public function getPaymentAction($store = null)
     {
-        return $this->_getStoreConfig(self::CONFIG_XML_PATH_PAYMENT_ACTION, $store);
+        return trim($this->_getStoreConfig(self::CONFIG_XML_PATH_PAYMENT_ACTION, $store));
     }
 
     /**
@@ -240,7 +240,7 @@ class Amazon_Payments_Model_Config
      */
     public function getNewOrderStatus($store = null)
     {
-        return $this->_getStoreConfig(self::CONFIG_XML_PATH_ORDER_STATUS, $store);
+        return trim($this->_getStoreConfig(self::CONFIG_XML_PATH_ORDER_STATUS, $store));
     }
 
     /**
@@ -253,10 +253,10 @@ class Amazon_Payments_Model_Config
     {
         $storeName = $this->_getStoreConfig(self::CONFIG_XML_PATH_STORE_NAME, $store);
         if ($storeName) {
-            return $storeName;
+            return trim($storeName);
         }
         else {
-            return Mage::app()->getStore()->getName();
+            return trim(Mage::app()->getStore()->getName());
         }
     }
 
@@ -273,7 +273,7 @@ class Amazon_Payments_Model_Config
             $softDesc = Mage::app()->getStore()->getName();
         }
 
-        return substr($softDesc, 0, 16); // 16 chars max
+        return trim(substr($softDesc, 0, 16)); // 16 chars max
     }
 
     /**
@@ -339,7 +339,7 @@ class Amazon_Payments_Model_Config
      */
     public function getButtonType($store = null)
     {
-        return $this->_getStoreConfig(self::CONFIG_XML_PATH_BUTTON_TYPE, $store);
+        return trim($this->_getStoreConfig(self::CONFIG_XML_PATH_BUTTON_TYPE, $store));
     }
 
     /**
@@ -350,7 +350,7 @@ class Amazon_Payments_Model_Config
      */
     public function getButtonColor($store = null)
     {
-        return $this->_getStoreConfig(self::CONFIG_XML_PATH_BUTTON_COLOR, $store);
+        return trim($this->_getStoreConfig(self::CONFIG_XML_PATH_BUTTON_COLOR, $store));
     }
 
     /**
@@ -361,7 +361,7 @@ class Amazon_Payments_Model_Config
      */
     public function getButtonSize($store = null)
     {
-        return $this->_getStoreConfig(self::CONFIG_XML_PATH_BUTTON_SIZE, $store);
+        return trim($this->_getStoreConfig(self::CONFIG_XML_PATH_BUTTON_SIZE, $store));
     }
 
     /**
