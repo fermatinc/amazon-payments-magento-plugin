@@ -259,6 +259,10 @@ AmazonPaymentsMageCheckout.prototype = {
             response = {};
         }
 
+        if (response.amazonLogout) {
+            amazon.Login.logout();
+        }
+
         if (response.redirect) {
             this.isSuccess = true;
             window.top.location.href = response.redirect;

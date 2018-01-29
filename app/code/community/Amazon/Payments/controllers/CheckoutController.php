@@ -351,6 +351,7 @@ class Amazon_Payments_CheckoutController extends Amazon_Payments_Controller_Chec
             if (!empty($message)) {
                 $result['error_messages'] = $message;
             }
+
             $result['goto_section'] = 'payment';
             $result['update_section'] = array(
                 'name' => 'payment-method',
@@ -362,6 +363,14 @@ class Amazon_Payments_CheckoutController extends Amazon_Payments_Controller_Chec
             $result['success'] = false;
             $result['error'] = true;
             $result['error_messages'] = $e->getMessage();
+
+            if (strpos($result['error_messages'], 'AmazonRejected') !== false) {
+                $result['amazonLogout'] = true;
+                $this->clearSession();
+                Mage::getSingleton('checkout/session')->addError($this->__('Amazon Payments could not process your payment. Please proceed to checkout and use a different payment option.'));
+                $redirectUrl = Mage::getUrl('checkout/cart');
+            }
+
 
             $gotoSection = $this->_getCheckout()->getCheckout()->getGotoSection();
             if ($gotoSection) {
