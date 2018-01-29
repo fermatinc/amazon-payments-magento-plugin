@@ -160,8 +160,6 @@ class Amazon_Payments_CheckoutController extends Amazon_Payments_Controller_Chec
             }
         }
 
-
-
         $result = array(
             'shipping_method' => $this->_getBlockHtml($shipping_block),
             'review'          => $this->_getBlockHtml('checkout_amazon_payments_review'),
@@ -170,6 +168,12 @@ class Amazon_Payments_CheckoutController extends Amazon_Payments_Controller_Chec
         // Validate country
         if (!$this->isCountryAllowed($this->_getCheckout()->getQuote()->getShippingAddress()->getCountry())) {
             $result['shipping_method'] = $this->__('This order cannot be shipped to the selected country. Please use a different shipping address.');
+        }
+
+        // Check if state is blocked by config
+        if (in_array($quote->getShippingAddress()->getRegionCode(), $this->_getConfig()->getBlockStates())) {
+            $result['review'] =
+            $result['shipping_method'] = $this->__('This order cannot be shipped to the selected state. Please use a different shipping address.');
         }
 
         $this->getResponse()->setBody(Mage::helper('core')->jsonEncode($result));
@@ -488,6 +492,13 @@ class Amazon_Payments_CheckoutController extends Amazon_Payments_Controller_Chec
     protected function _getCart()
     {
         return Mage::getSingleton('checkout/cart');
+    }
+
+    /**
+     * Get Payments config
+     */
+    protected function _getConfig() {
+        return Mage::getModel('amazon_payments/config');
     }
 
     /**

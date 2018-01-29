@@ -34,6 +34,7 @@ class Amazon_Payments_Model_Config
     const CONFIG_XML_PATH_TOKEN_REQUIRED = 'payment/amazon_payments/token_required';
     const CONFIG_XML_PATH_RESTRICTED_IPS = 'payment/amazon_payments/restricted_ips';
     const CONFIG_XML_PATH_SHOW_COUPON    = 'payment/amazon_payments/show_coupon';
+    const CONFIG_XML_PATH_BLOCK_STATES   = 'payment/amazon_payments/block_states';
 
     const CONFIG_XML_PATH_BUTTON_TYPE    = 'payment/amazon_payments/button_type';
     const CONFIG_XML_PATH_BUTTON_COLOR   = 'payment/amazon_payments/button_color';
@@ -384,6 +385,18 @@ class Amazon_Payments_Model_Config
     public function isShowCoupon($store = null)
     {
         return ($this->_getStoreConfig(self::CONFIG_XML_PATH_SHOW_COUPON, $store));
+    }
+
+    /**
+     * Get blocked states
+     *
+     * @param   store $store
+     * @return  array
+     */
+    public function getBlockStates($store = null)
+    {
+        $states = (string) $this->_getStoreConfig(self::CONFIG_XML_PATH_BLOCK_STATES, $store);
+        return array_map('trim', explode(',', $states));
     }
 
 }
