@@ -12,7 +12,8 @@ class Amazon_Payments_CheckoutController extends Amazon_Payments_Controller_Chec
 {
     protected $_amazonOrderReferenceId;
     protected $_checkoutUrl = 'checkout/amazon_payments';
-    
+    private   $_methodType  = 'amazon_payments';
+
     const COUPON_CODE_MAX_LENGTH = 255;
 
     /**
@@ -129,7 +130,24 @@ class Amazon_Payments_CheckoutController extends Amazon_Payments_Controller_Chec
         }
 
         $this->_saveShipping();
-        $this->_getCheckout()->getQuote()->collectTotals()->save();
+
+        $quote = $this->_getCheckout()->getQuote();
+
+        if ($quote->isVirtual()) {
+            $quote->getBillingAddress()->setPaymentMethod($this->_methodType);
+        } else {
+            $quote->getShippingAddress()->setPaymentMethod($this->_methodType);
+        }
+
+        // shipping totals may be affected by payment method
+        if (!$quote->isVirtual() && $quote->getShippingAddress()) {
+            $quote->getShippingAddress()->setCollectShippingRates(true);
+        }
+
+        $payment = $quote->getPayment();
+        $payment->importData(array('method' => $this->_methodType));
+
+        $quote->collectTotals()->save();
 
         $shipping_block = 'checkout_amazon_payments_shippingmethod';
 
@@ -141,6 +159,8 @@ class Amazon_Payments_CheckoutController extends Amazon_Payments_Controller_Chec
                     $shipping_block = 'checkout_amazon_payments_shippingmethod_shipperhq';
             }
         }
+
+
 
         $result = array(
             'shipping_method' => $this->_getBlockHtml($shipping_block),
@@ -316,7 +336,7 @@ class Amazon_Payments_CheckoutController extends Amazon_Payments_Controller_Chec
             }
 
             $this->_getCheckout()->savePayment(array(
-                'method' => 'amazon_payments',
+                'method' => $this->_methodType,
                 'additional_information' => $additional_information,
             ));
 
@@ -393,7 +413,7 @@ class Amazon_Payments_CheckoutController extends Amazon_Payments_Controller_Chec
 
         try {
             $codeLength = strlen($couponCode);
-            
+
             //Add support for Magento < 1.8
             if(defined('Mage_Checkout_Helper_Cart::COUPON_CODE_MAX_LENGTH')){
                 $isCodeLengthValid = $codeLength && $codeLength <= Mage_Checkout_Helper_Cart::COUPON_CODE_MAX_LENGTH;
