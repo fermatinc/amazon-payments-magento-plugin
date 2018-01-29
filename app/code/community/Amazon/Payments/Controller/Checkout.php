@@ -193,7 +193,6 @@ abstract class Amazon_Payments_Controller_Checkout extends Mage_Checkout_Control
         return $this->_order;
     }
 
-
     /**
      * Get Amazon API
      *
@@ -204,12 +203,13 @@ abstract class Amazon_Payments_Controller_Checkout extends Mage_Checkout_Control
     }
 
     /**
-     * Get Payments config
+     * Get payments config
+     *
+     * @return Amazon_Payments_Model_Config
      */
     protected function _getConfig() {
         return Mage::getModel('amazon_payments/config');
     }
-
 
     /**
      * Send Ajax redirect response
@@ -251,6 +251,7 @@ abstract class Amazon_Payments_Controller_Checkout extends Mage_Checkout_Control
      */
     protected function _saveShipping()
     {
+
         if ($this->getAmazonOrderReferenceId() || $this->getAmazonBillingAgreementId()) {
 
             if ($this->getAmazonBillingAgreementId()) {
@@ -261,8 +262,6 @@ abstract class Amazon_Payments_Controller_Checkout extends Mage_Checkout_Control
             }
 
             $address = $orderReferenceDetails->getDestination()->getPhysicalDestination();
-
-            // Split name into first/last
 
             // Find Mage state/region ID
             $regionModel = Mage::getModel('directory/region')->loadByCode($address->getStateOrRegion(), $address->getCountryCode());
@@ -275,6 +274,13 @@ abstract class Amazon_Payments_Controller_Checkout extends Mage_Checkout_Control
             }
 
             $data = Mage::helper('amazon_payments')->transformAmazonAddressToMagentoAddress($address);
+
+            // Missing data, likely an issue with suhosin extension
+            if (empty($data['firstname'])) {
+                Mage::log($this->getAmazonOrderReferenceId(), null, 'amazon_address.log');
+                Mage::log($data, null, 'amazon_address.log');
+            }
+
             $data['use_for_shipping'] = true;
             $data['region'] = $address->getStateOrRegion();
             $data['region_id'] = $regionId;
