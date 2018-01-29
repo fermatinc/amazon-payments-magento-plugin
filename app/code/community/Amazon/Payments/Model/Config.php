@@ -14,7 +14,7 @@ class Amazon_Payments_Model_Config
      * Paths to Payment Method config
      */
 
-    const CONFIG_XML_PATH_ENABLED        = 'payment/amazon_payments/enabled';
+    const CONFIG_XML_PATH_ENABLED        = 'payment/amazon_payments/active';
     const CONFIG_XML_PATH_CLIENT_ID      = 'payment/amazon_payments/client_id';
     const CONFIG_XML_PATH_CLIENT_SECRET  = 'payment/amazon_payments/client_secret';
     const CONFIG_XML_PATH_SELLER_ID      = 'payment/amazon_payments/seller_id';
