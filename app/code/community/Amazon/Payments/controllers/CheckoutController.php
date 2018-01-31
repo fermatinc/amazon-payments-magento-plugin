@@ -171,7 +171,7 @@ class Amazon_Payments_CheckoutController extends Amazon_Payments_Controller_Chec
         }
 
         // Check if state is blocked by config
-        if (in_array($quote->getShippingAddress()->getRegionCode(), $this->_getConfig()->getBlockStates())) {
+        if ($quote->getShippingAddress()->getCountry() == 'US' && in_array($quote->getShippingAddress()->getRegionCode(), $this->_getConfig()->getBlockStates())) {
             $result['review'] =
             $result['shipping_method'] = $this->__('This order cannot be shipped to the selected state. Please use a different shipping address.');
         }

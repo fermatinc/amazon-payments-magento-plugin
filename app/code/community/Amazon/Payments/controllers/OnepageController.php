@@ -81,7 +81,8 @@ class Amazon_Payments_OnepageController extends Amazon_Payments_Controller_Check
             }
 
             // Check if state is blocked by config
-            if (in_array($this->_getCheckout()->getQuote()->getShippingAddress()->getRegionCode(), Mage::getModel('amazon_payments/config')->getBlockStates())) {
+            if ($this->_getCheckout()->getQuote()->getShippingAddress()->getCountry() == 'US' &&
+                in_array($this->_getCheckout()->getQuote()->getShippingAddress()->getRegionCode(), Mage::getModel('amazon_payments/config')->getBlockStates())) {
                 $result['error'] = true;
                 $result['message'] = $this->__('This order cannot be shipped to the selected state. Please use a different shipping address.');
             }
