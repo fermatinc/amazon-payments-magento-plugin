@@ -300,6 +300,12 @@ class Amazon_Payments_CheckoutController extends Amazon_Payments_Controller_Chec
 
         $result = array();
 
+        // Edge-case for undefined store
+        $store = Mage::app()->getStore();
+        if (!isset($store)) {
+            Mage::app()->setCurrentStore($this->_getCheckout()->getQuote()->getStoreId());
+        }
+
         try {
             $requiredAgreements = Mage::helper('checkout')->getRequiredAgreementIds();
             if ($requiredAgreements) {
