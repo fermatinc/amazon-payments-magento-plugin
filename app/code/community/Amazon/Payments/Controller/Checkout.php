@@ -277,7 +277,8 @@ abstract class Amazon_Payments_Controller_Checkout extends Mage_Checkout_Control
 
             // Missing data, likely an issue with suhosin extension
             if (empty($data['firstname'])) {
-                Mage::log($this->getAmazonOrderReferenceId(), null, 'amazon_address.log');
+                Mage::log('Missing address data. See https://github.com/amzn/amazon-payments-magento-plugin/issues/328', null, 'amazon_address.log');
+                Mage::log('Token: ' . $this->getAmazonOrderReferenceId(), null, 'amazon_address.log');
                 Mage::log($data, null, 'amazon_address.log');
             }
 
