@@ -167,8 +167,7 @@ class Amazon_Payments_CheckoutController extends Amazon_Payments_Controller_Chec
 
         // Validate country
         if (!$this->isCountryAllowed($this->_getCheckout()->getQuote()->getShippingAddress()->getCountry())) {
-            $result['review'] =
-            $result['shipping_method'] = $this->__('This order cannot be shipped to the selected country. Please use a different shipping address.');
+            $result['review'] = $result['shipping_method'] = $this->__('This order cannot be shipped to the selected country. Please use a different shipping address.');
         }
 
         // Check if state is blocked by config
